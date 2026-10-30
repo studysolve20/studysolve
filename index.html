@@ -1,0 +1,102 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StudySolve Arcade - 50 Games</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:white;font-family:Arial,sans-serif}
+header{background:#14233b;padding:20px;text-align:center}
+main{max-width:1000px;margin:auto;padding:15px}
+.gate{text-align:center;margin:45px auto;padding:25px;background:#172942;border-radius:15px;max-width:400px}
+input{padding:13px;width:100%;margin:10px 0;border-radius:8px;border:1px solid #789;background:#101b2d;color:white;font-size:17px}
+button{background:#3285f5;color:white;border:0;border-radius:8px;padding:12px;margin:5px;font-size:15px}
+#portal{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.game{background:#172942;padding:15px;border-radius:12px;text-align:center}
+.game .emoji{font-size:32px}
+#play{display:none;background:#172942;padding:20px;margin:15px 0;border-radius:12px;text-align:center}
+#stage{padding:15px}
+footer{text-align:center;padding:25px;color:#aaa}
+</style>
+</head>
+<body>
+<header>
+<h1>🎮 StudySolve Arcade</h1>
+<p>50 Mini Games | Play Anywhere</p>
+</header>
+<main>
+<section id="gate" class="gate">
+<h2>Welcome to StudySolve</h2>
+<p>Enter access code</p>
+<input id="code" type="password" placeholder="Enter code">
+<button onclick="unlock()">Open Games</button>
+<p id="msg"></p>
+</section>
+<section id="portal">
+<input id="search" placeholder="Search games..." oninput="render()">
+<div id="play">
+<h2 id="title"></h2>
+<p id="instructions"></p>
+<div id="stage"></div>
+<p id="score">Score: 0</p>
+<button onclick="closeGame()">Back to games</button>
+</div>
+<div class="grid" id="grid"></div>
+</section>
+</main>
+<footer>StudySolve Arcade</footer>
+<script>
+const games=[
+["🏎️","Car Racing"],["🔥","Fire Fighter"],["🧩","Jigsaw Puzzle"],["🧠","Memory Cards"],["🐍","Snake"],["🚀","Space Shooter"],["🏃","Jungle Runner"],["🧱","Brick Breaker"],["🎯","Target Shooter"],["⚽","Penalty Kick"],["🏀","Basketball Toss"],["🎈","Balloon Pop"],["🧊","Ice Escape"],["🚁","Helicopter Rescue"],["🛸","UFO Dodge"],["🐸","Frog Jump"],["🏁","Bike Racing"],["🚤","Boat Race"],["✈️","Airplane Pilot"],["🚒","Fire Truck Dash"],["🔢","Number Puzzle"],["🔤","Word Scramble"],["➕","Math Sprint"],["🧮","Quick Calculator"],["🌈","Color Match"],["🎨","Color Switch"],["♟️","Chess Mini"],["⭕","Tic Tac Toe"],["✂️","Rock Paper Scissors"],["🎲","Dice Duel"],["🪙","Coin Catcher"],["🍎","Fruit Catcher"],["🍉","Fruit Slice"],["🐧","Penguin Slide"],["🦖","Dino Jump"],["🌊","Ocean Diver"],["👻","Ghost Hunt"],["🧟","Zombie Defense"],["🏰","Castle Defense"],["🦅","Eagle Flight"],["🔷","Shape Fit"],["🔍","Spot the Odd One"],["🧠","Pattern Memory"],["🔠","Typing Challenge"],["🎵","Beat Tap"],["🅿️","Parking Master"],["🚦","Traffic Control"],["🛹","Skateboard Dash"],["🎣","Fishing Frenzy"],["💎","Gem Match"]
+];
+let points=0,interval=null;
+function unlock(){
+if(document.getElementById("code").value==="4444"){
+document.getElementById("gate").style.display="none";
+document.getElementById("portal").style.display="block";
+render();
+}else document.getElementById("msg").textContent="Wrong code. Try again.";
+}
+function render(){
+let q=document.getElementById("search").value.toLowerCase();
+document.getElementById("grid").innerHTML=games.map((g,i)=>({g,i})).filter(x=>x.g[1].toLowerCase().includes(q)).map(x=>`
+<div class="game">
+<div class="emoji">${x.g[0]}</div>
+<h3>${x.i+1}. ${x.g[1]}</h3>
+<button onclick="startGame(${x.i})">Play</button>
+</div>`).join("");
+}
+function closeGame(){
+clearInterval(interval);
+document.getElementById("play").style.display="none";
+}
+function startGame(i){
+closeGame();
+points=0;
+document.getElementById("play").style.display="block";
+document.getElementById("title").textContent=games[i][0]+" "+games[i][1];
+document.getElementById("instructions").textContent="Tap the button as many times as possible in 20 seconds!";
+document.getElementById("stage").innerHTML='<button id="tap" style="font-size:28px;padding:35px">TAP!</button><p id="time">Time: 20</p>';
+document.getElementById("score").textContent="Score: 0";
+let seconds=20;
+document.getElementById("tap").onclick=()=>{
+points++;
+document.getElementById("score").textContent="Score: "+points;
+};
+interval=setInterval(()=>{
+seconds--;
+document.getElementById("time").textContent="Time: "+seconds;
+if(seconds<=0){
+clearInterval(interval);
+document.getElementById("instructions").textContent="Game over! Your score: "+points;
+document.getElementById("tap").disabled=true;
+}
+},1000);
+}
+</script>
+</body>
+</html>
+  
